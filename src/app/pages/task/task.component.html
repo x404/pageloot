@@ -1,0 +1,58 @@
+<h1>Expense Tracker Application</h1>
+
+<h2>Description:</h2>
+<p>You need to create a web application for tracking personal finances. The user should be able to add expenses and
+    incomes, view the overall balance, and filter records by categories.</p>
+
+Functional Requirements:
+<ul>
+    <li>1. Adding Income and Expenses <br>
+        ◦ The user can add records for income and expenses through a form:
+        <ul>
+            <li>Name (required)</li>
+            <li>Amount (required, float, two decimal places)</li>
+            <li>Transaction type (income or expense)</li>
+            <li>Category (e.g., "Groceries," "Salary," "Entertainment," etc.)</li>
+            <li>Transaction date (default to current date but can be changed)</li>
+        </ul>
+
+    </li>
+    <li>2. Viewing Total Balance <br>
+        ◦ The application should display the current balance: the total amount of income minus expenses.
+    </li>
+    <li>3. Transaction List <br>
+        ◦ The user can view all transactions in a list format:
+        
+        <ul>
+            <li>Transaction name</li>
+            <li>Amount</li>
+            <li>Category</li>
+            <li>Date</li>
+        </ul>
+    </li>
+    <li>4. Filtering Transactions <br>
+        ◦ The user can filter transactions by type (income or expense) and by categories. <br>
+        ◦ The ability to sort records by date or amount.
+    </li>
+    <li>5. Data Persistence <br>
+        ◦ All data must be stored in localStorage so that records persist after a page reload.
+    </li>
+</ul>
+
+
+<h2>Technical Requirements:</h2>
+<ul>
+    <li>Angular latest version</li>
+    <li>Keeping the code clean (use eslint for check)</li>
+    <li>Readable and understandable names of variables, classes, functions and methods</li>
+    <li>Use the types any and unknown as little as possible</li>
+    <li>Use of third-party libraries is allowed</li>
+    <li>Everything should to be developed taking into account the fact that in the future it is possible to add other
+        types of questions.
+    </li>
+    <li>All application state and all data must be stored in local storage. That is, after reloading the page, the
+        state
+        of the application must be restored. All previously created questions and answers must be restored.
+    </li>
+    <li>Responsive design for convenient use on mobile devices. (optional)</li>
+</ul>
