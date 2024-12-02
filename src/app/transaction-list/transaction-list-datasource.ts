@@ -4,14 +4,12 @@ import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
 
-// TODO: Replace this with your own data model type
 export interface TransactionListItem {
   name: string;
   amount: number;
   type: 'income' | 'expense';
   category: string;
   date: Date;
-  
 }
 
 // TODO: replace this with real data from your application
