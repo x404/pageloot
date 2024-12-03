@@ -38,16 +38,13 @@
             </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="example-full-width">
+        <mat-form-field>
             <mat-label>Choose a date</mat-label>
             <input matInput [matDatepicker]="picker">
-            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-hint>DD.MM.YYYY</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker [dateClass]="dateClass" #picker></mat-datepicker>
+            <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-        <button mat-raised-button (click)="picker.open()">Open</button>
-
-
     </div>
 
     <div mat-dialog-actions>

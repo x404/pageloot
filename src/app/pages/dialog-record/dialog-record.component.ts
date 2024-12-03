@@ -6,17 +6,19 @@ import {
     MatDialogRef,
     MatDialogTitle
 } from "@angular/material/dialog";
-import { MatInput } from "@angular/material/input";
+import { MatInput, MatInputModule } from "@angular/material/input";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { MatFormField, MatLabel, MatHint, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatHint, MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from "@angular/material/select";
-import { MatButton } from "@angular/material/button";
+import { MatButton, MatButtonModule } from "@angular/material/button";
 import {MatIconModule} from '@angular/material/icon';
 
+import { provideNativeDateAdapter } from "@angular/material/core";
+
+
 import {
-    MatCalendarCellClassFunction,
     MatDatepicker,
-    MatDatepickerInput,
+    MatDatepickerInput, MatDatepickerModule,
     MatDatepickerToggle
 } from "@angular/material/datepicker";
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/material/core";
@@ -58,7 +60,9 @@ export const MY_FORMATS = {
         MatDatepicker,
         MatDatepickerInput,
         MatHint,
-        MatIconModule
+        MatIconModule,
+        MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule
+
     ],
     providers: [
         { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
@@ -74,18 +78,7 @@ export class DialogRecordComponent implements OnInit {
 
     isSaving = signal<boolean>(false);
 
-    dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
-        // Only highligh dates inside the month view.
-        if (view === 'month') {
-            const date = cellDate.getDate();
 
-            // Highlight the 1st and 20th day of each month.
-            return date === 1 || date === 20 ? 'example-custom-date-class' : '';
-        }
-
-        return '';
-    };
-    
     
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
