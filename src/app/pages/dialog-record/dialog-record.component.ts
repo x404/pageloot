@@ -7,13 +7,11 @@ import {
     MatDialogTitle
 } from "@angular/material/dialog";
 import { MatInput, MatInputModule } from "@angular/material/input";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatFormField, MatLabel, MatHint, MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from "@angular/material/select";
 import { MatButton, MatButtonModule } from "@angular/material/button";
-import {MatIconModule} from '@angular/material/icon';
-
-import { provideNativeDateAdapter } from "@angular/material/core";
+import { MatIconModule } from '@angular/material/icon';
 
 
 import {
@@ -61,8 +59,8 @@ export const MY_FORMATS = {
         MatDatepickerInput,
         MatHint,
         MatIconModule,
-        MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule
-
+        MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, FormsModule,
+        ReactiveFormsModule,
     ],
     providers: [
         { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
@@ -75,11 +73,11 @@ export const MY_FORMATS = {
 export class DialogRecordComponent implements OnInit {
     recordForm: FormGroup;
     categories: Category[] = [];
+    endDate: Date = new Date();
 
     isSaving = signal<boolean>(false);
 
-
-    
+ 
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
