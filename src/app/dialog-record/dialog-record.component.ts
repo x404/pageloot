@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
     MatDialogActions,
     MatDialogClose,
@@ -22,12 +22,9 @@ import {
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/material/core";
 import { MomentDateAdapter } from "@angular/material-moment-adapter";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
-import { RecordDataForCreation } from "../types/interfaces";
+import { Category, TransactionListItem } from "@interface/interfaces";
+import { TransactionDataService } from "../core/services/transaction-data.service";
 
-interface Category {
-    id: number;
-    name: string;
-}
 
 export const MY_FORMATS = {
     parse: {
@@ -75,7 +72,8 @@ export const MY_FORMATS = {
 export class DialogRecordComponent implements OnInit {
     recordForm: FormGroup;
     categories: Category[] = [];
-    endDate: Date = new Date();
+    public transactionDataService = inject(TransactionDataService);
+
 
     isSaving = signal<boolean>(false);
 
@@ -112,7 +110,7 @@ export class DialogRecordComponent implements OnInit {
 
     onSubmit() {
         console.log(this.recordForm.value);
-        const formData: RecordDataForCreation = this.recordForm.value
+        const formData: TransactionListItem = this.recordForm.value;
 
         if (!this.isFormValid(formData)) {
             return;
@@ -124,11 +122,15 @@ export class DialogRecordComponent implements OnInit {
         // const product = this.prepareProductData(formData);
         //
         // Save product data and refresh table
-        // this.saveProductData(product);
-        // this.dataStorageService.refreshTable();
+        this.saveTransaction(formData);
+        this.transactionDataService.refreshTable();
         
         
         this.dialogRef.close();
+    }
+    
+    private saveTransaction(transaction: TransactionListItem): void {
+        this.transactionDataService.saveTransaction(transaction);
     }
     
     private isFormValid(formData: any): boolean {

@@ -2,10 +2,11 @@ import { AfterViewInit, Component, OnInit, signal, ViewChild } from '@angular/co
 import { MatTableModule, MatTable } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
-import { TransactionListDataSource, TransactionListItem } from './transaction-list-datasource';
+import { TransactionListDataSource } from './transaction-list-datasource';
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
 import { DatePipe } from "@angular/common";
+import { TransactionListItem } from "@interface/interfaces";
 
 @Component({
   selector: 'app-transaction-list',

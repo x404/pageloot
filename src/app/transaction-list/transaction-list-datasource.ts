@@ -3,22 +3,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
+import { TransactionListItem } from "../core/interfaces/interfaces";
+import { TransactionDataService } from "../core/services/transaction-data.service";
+import { inject } from "@angular/core";
 
-export interface TransactionListItem {
-  name: string;
-  amount: number;
-  type: 'income' | 'expense';
-  category: string;
-  date: Date;
-}
 
-// TODO: replace this with real data from your application
-const TRANSACTION_DATA: TransactionListItem[] = [
-  {name: 'Hydrogen', amount: 1, type: 'income', category: 'Groceries', date: new Date()},
-  {name: 'Helium', amount: 3, type: 'income', category: 'Groceries', date: new Date()},
-  {name: 'Lithium', amount: 5, type: 'expense', category: 'Salary', date: new Date()},
-  {name: 'Beryllium', amount: 10, type: 'income', category: 'Groceries', date: new Date()}
-];
 
 /**
  * Data source for the TransactionList view. This class should
@@ -26,17 +15,20 @@ const TRANSACTION_DATA: TransactionListItem[] = [
  * (including sorting, pagination, and filtering).
  */
 export class TransactionListDataSource extends DataSource<TransactionListItem> {
-  data: TransactionListItem[] = TRANSACTION_DATA;
+
+  public transactionDataService = inject(TransactionDataService);
+  data: TransactionListItem[] = this.transactionDataService.getTransactionDate();
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
-
+  
+  
   constructor() {
     super();
   }
   
 
   getBalance(){
-    const balance = TRANSACTION_DATA.reduce( (acc, transactionItem) => {
+    const balance = this.transactionDataService.getTransactionDate().reduce( (acc, transactionItem) => {
       if (transactionItem.type === 'expense') {
         acc -= transactionItem.amount;
       } else {
