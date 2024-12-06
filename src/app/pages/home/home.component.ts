@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TransactionListComponent } from "../../transaction-list/transaction-list.component";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
-import { DialogRecordComponent } from "@pages/dialog-record/dialog-record.component";
+import { DialogRecordComponent } from "../../dialog-record/dialog-record.component";
 
 @Component({
     selector: 'app-home',

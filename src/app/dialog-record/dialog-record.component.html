@@ -6,6 +6,11 @@
 >
     <div mat-dialog-content>
 
+        <mat-radio-group aria-label="Select an option" formControlName="type">
+            <mat-radio-button value="income" checked>Income</mat-radio-button>
+            <mat-radio-button value="expense">Expense</mat-radio-button>
+        </mat-radio-group>
+        
         <mat-form-field
                 appearance="fill"
                 class="my-1"
@@ -40,7 +45,7 @@
 
         <mat-form-field>
             <mat-label>Choose a date</mat-label>
-            <input matInput [matDatepicker]="picker">
+            <input matInput [matDatepicker]="picker" formControlName="date">
             <mat-hint>DD.MM.YYYY</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>

@@ -21,6 +21,8 @@ import {
 } from "@angular/material/datepicker";
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/material/core";
 import { MomentDateAdapter } from "@angular/material-moment-adapter";
+import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
+import { RecordDataForCreation } from "../types/interfaces";
 
 interface Category {
     id: number;
@@ -60,7 +62,7 @@ export const MY_FORMATS = {
         MatHint,
         MatIconModule,
         MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, FormsModule,
-        ReactiveFormsModule,
+        ReactiveFormsModule, MatRadioGroup, MatRadioButton,
     ],
     providers: [
         { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
@@ -77,17 +79,17 @@ export class DialogRecordComponent implements OnInit {
 
     isSaving = signal<boolean>(false);
 
- 
+
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
     ) {
         this.recordForm = this.fb.group({
-            name: [''],
-            amount: [''],
-            type: [''],
-            category: [''],
-            expiration_date: [new Date(), Validators.required]
+            name: ['', Validators.required],
+            amount: ['', Validators.required],
+            type: ['income'],
+            category: ['', Validators.required],
+            date: [new Date(), Validators.required]
         })
     }
 
@@ -109,6 +111,31 @@ export class DialogRecordComponent implements OnInit {
     }
 
     onSubmit() {
+        console.log(this.recordForm.value);
+        const formData: RecordDataForCreation = this.recordForm.value
+
+        if (!this.isFormValid(formData)) {
+            return;
+        }
+
         this.isSaving.set(true);
+
+        // Prepare product data for saving
+        // const product = this.prepareProductData(formData);
+        //
+        // Save product data and refresh table
+        // this.saveProductData(product);
+        // this.dataStorageService.refreshTable();
+        
+        
+        this.dialogRef.close();
     }
+    
+    private isFormValid(formData: any): boolean {
+        const { name, amount, type, category } = formData;
+        return name && amount && type && category;
+    }
+
+
+    protected readonly name = name;
 }
