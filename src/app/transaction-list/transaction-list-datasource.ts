@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
-import { TransactionListItem } from "../core/interfaces/interfaces";
+import { TransactionListItem } from "@interface/interfaces";
 import { TransactionDataService } from "../core/services/transaction-data.service";
 import { inject } from "@angular/core";
 
@@ -17,7 +17,8 @@ import { inject } from "@angular/core";
 export class TransactionListDataSource extends DataSource<TransactionListItem> {
 
   public transactionDataService = inject(TransactionDataService);
-  data: TransactionListItem[] = this.transactionDataService.getTransactionDate();
+  data: TransactionListItem[] = this.transactionDataService.getTransactionData();
+  
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
   
@@ -27,12 +28,12 @@ export class TransactionListDataSource extends DataSource<TransactionListItem> {
   }
   
 
-  getBalance(){
-    const balance = this.transactionDataService.getTransactionDate().reduce( (acc, transactionItem) => {
+  getBalance(): number {
+    const balance = this.transactionDataService.getTransactionData().reduce( (acc, transactionItem) => {
       if (transactionItem.type === 'expense') {
-        acc -= transactionItem.amount;
+        acc -= +transactionItem.amount;
       } else {
-        acc += transactionItem.amount;
+        acc += +transactionItem.amount;
       }
       return acc;
     }, 0)
@@ -44,14 +45,31 @@ export class TransactionListDataSource extends DataSource<TransactionListItem> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
+  // connect(): Observable<TransactionListItem[]> {
+  //   if (this.paginator && this.sort) {
+  //     // Combine everything that affects the rendered data into one update
+  //     // stream for the data-table to consume.
+  //     return merge(observableOf(this.data), this.paginator.page, this.sort.sortChange)
+  //       .pipe(map(() => {
+  //         return this.getPagedData(this.getSortedData([...this.data ]));
+  //       }));
+  //   } else {
+  //     throw Error('Please set the paginator and sort on the data source before connecting.');
+  //   }
+  // }
+
   connect(): Observable<TransactionListItem[]> {
     if (this.paginator && this.sort) {
-      // Combine everything that affects the rendered data into one update
-      // stream for the data-table to consume.
-      return merge(observableOf(this.data), this.paginator.page, this.sort.sortChange)
-        .pipe(map(() => {
-          return this.getPagedData(this.getSortedData([...this.data ]));
-        }));
+      return merge(
+          this.transactionDataService.transactionData$,
+          this.paginator.page,
+          this.sort.sortChange
+      ).pipe(
+          map(() => {
+            const data = this.transactionDataService.getTransactionData();
+            return this.getPagedData(this.getSortedData([...data]));
+          })
+      );
     } else {
       throw Error('Please set the paginator and sort on the data source before connecting.');
     }
