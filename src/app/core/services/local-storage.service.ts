@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TransactionListItem } from "@interface/interfaces";
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class LocalStorageService {
    * @param {string} key - The key to look up in local storage.
    * @returns {any | null} - The parsed value associated with the key, or null if the key is not found.
    */
-  public get(key: string): any {
+  public get(key: string): TransactionListItem[] {
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : null;
   }
