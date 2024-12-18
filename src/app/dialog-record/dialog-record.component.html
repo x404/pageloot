@@ -35,7 +35,7 @@
             <mat-select formControlName="category">
                 @for (category of categories; track category.id) {
                     <mat-option
-                            [value]="category?.id"
+                            [value]="category?.name"
                     >
                         {{ category?.name }}
                     </mat-option>

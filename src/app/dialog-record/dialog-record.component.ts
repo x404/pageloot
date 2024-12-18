@@ -109,7 +109,6 @@ export class DialogRecordComponent implements OnInit {
     }
 
     onSubmit() {
-        // console.log(this.recordForm.value);
         const formData: TransactionListItem = this.recordForm.value;
 
         if (!this.isFormValid(formData)) {

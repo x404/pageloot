@@ -14,20 +14,21 @@ export class TransactionDataService {
     public localStorage = inject(LocalStorageService);
     
     LOCAL_STORAGE_KEY = 'transaction-data';
-    START_TRANSACTION_DATA: TransactionListItem[] = [
-        { name: 'Hydrogen', amount: 1, type: 'income', category: 'Groceries', date: new Date() },
-        { name: 'Helium', amount: 3, type: 'income', category: 'Groceries', date: new Date() },
-        { name: 'Lithium', amount: 5, type: 'expense', category: 'Salary', date: new Date() },
-        { name: 'Beryllium', amount: 10, type: 'income', category: 'Groceries', date: new Date() }
-    ];
+    // INITIAL_TRANSACTION_DATA: TransactionListItem[] = [
+    //     { name: 'Hydrogen', amount: 1, type: 'income', category: 'Groceries', date: new Date() },
+    //     { name: 'Helium', amount: 3, type: 'income', category: 'Groceries', date: new Date() },
+    //     { name: 'Lithium', amount: 5, type: 'expense', category: 'Salary', date: new Date() },
+    //     { name: 'Beryllium', amount: 10, type: 'income', category: 'Groceries', date: new Date() }
+    // ];
+    INITIAL_TRANSACTION_DATA: TransactionListItem[] = [];
     TRANSACTION_DATA : TransactionListItem[] = [];
 
     constructor() {
         if (this.localStorage.has(this.LOCAL_STORAGE_KEY)) {
             this.TRANSACTION_DATA = this.localStorage.get(this.LOCAL_STORAGE_KEY);
         } else {
-            this.localStorage.set(this.LOCAL_STORAGE_KEY, this.START_TRANSACTION_DATA);
-            this.TRANSACTION_DATA = this.START_TRANSACTION_DATA;
+            this.localStorage.set(this.LOCAL_STORAGE_KEY, this.INITIAL_TRANSACTION_DATA);
+            this.TRANSACTION_DATA = this.INITIAL_TRANSACTION_DATA;
         }
         
         this.transactionDataSubject.next(this.TRANSACTION_DATA);
