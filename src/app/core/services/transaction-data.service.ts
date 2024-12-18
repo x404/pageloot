@@ -14,7 +14,7 @@ export class TransactionDataService {
     public localStorage = inject(LocalStorageService);
     
     LOCAL_STORAGE_KEY = 'transaction-data';
-    START_TRANSACTION_DATA = [
+    START_TRANSACTION_DATA: TransactionListItem[] = [
         { name: 'Hydrogen', amount: 1, type: 'income', category: 'Groceries', date: new Date() },
         { name: 'Helium', amount: 3, type: 'income', category: 'Groceries', date: new Date() },
         { name: 'Lithium', amount: 5, type: 'expense', category: 'Salary', date: new Date() },
@@ -27,6 +27,7 @@ export class TransactionDataService {
             this.TRANSACTION_DATA = this.localStorage.get(this.LOCAL_STORAGE_KEY);
         } else {
             this.localStorage.set(this.LOCAL_STORAGE_KEY, this.START_TRANSACTION_DATA);
+            this.TRANSACTION_DATA = this.START_TRANSACTION_DATA;
         }
         
         this.transactionDataSubject.next(this.TRANSACTION_DATA);
@@ -37,7 +38,9 @@ export class TransactionDataService {
     }
 
     saveTransaction(data: TransactionListItem) {
+        console.log(data);
         this.TRANSACTION_DATA.push(data);
+        this.localStorage.set(this.LOCAL_STORAGE_KEY, this.TRANSACTION_DATA);
         this.transactionDataSubject.next(this.TRANSACTION_DATA);
     }
     
