@@ -71,20 +71,20 @@ export const MY_FORMATS = {
 })
 export class DialogRecordComponent implements OnInit {
     recordForm: FormGroup;
+    regexPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
+    
     categories: Category[] = [];
     public transactionDataService = inject(TransactionDataService);
-
-
+    
     isSaving = signal<boolean>(false);
-
-
+ 
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
     ) {
         this.recordForm = this.fb.group({
             name: ['', Validators.required],
-            amount: ['', Validators.required],
+            amount: ['', [Validators.required, Validators.pattern(this.regexPattern)]],
             type: ['income'],
             category: ['', Validators.required],
             date: [new Date(), Validators.required]
@@ -108,6 +108,57 @@ export class DialogRecordComponent implements OnInit {
         ]
     }
 
+    get amountControl() {
+        return this.recordForm.get('amount')!;
+    }
+
+
+    restrictInput(event: KeyboardEvent): void {
+        const allowedKeys = [
+            'Backspace',
+            'Tab',
+            'ArrowLeft',
+            'ArrowRight',
+            'Delete',
+            'Home',
+            'End',
+        ];
+        const char = event.key;
+
+        if (
+            // Enable control keys
+            allowedKeys.includes(char) ||
+            // Let’s solve the numbers
+            /^[0-9]$/.test(char) ||
+            // Allow one point if it is not already there
+            (char === '.' &&
+                event.target instanceof HTMLInputElement &&
+                !event.target.value.includes('.'))
+        ) {
+            return;
+        }
+
+        event.preventDefault();
+    }
+    
+    validateInput(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const value = input.value;
+
+        // Remove more than two characters after the '.' if they exist
+        if (value.includes('.')) {
+            const [intPart, decimalPart] = value.split('.');
+            if (decimalPart && decimalPart.length > 2) {
+                input.value = `${intPart}.${decimalPart.substring(0, 2)}`;
+            }
+        }
+
+        // Remove leading zeros if entry starts with them (e.g. 0005 -> 5)
+        if (/^0[0-9]/.test(value)) {
+            input.value = parseFloat(value).toString();
+        }
+    }
+    
     onSubmit() {
         const formData: TransactionListItem = this.recordForm.value;
 
