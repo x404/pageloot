@@ -103,11 +103,15 @@ export class TransactionListDataSource extends DataSource<TransactionListItem> {
       return data;
     }
 
+    console.log( new Date(data[0].date).getTime())
+
     return data.sort((a, b) => {
       const isAsc = this.sort?.direction === 'asc';
       switch (this.sort?.active) {
-        case 'name': return compare(a.name, b.name, isAsc);
-        // case 'id': return compare(+a.id, +b.id, isAsc);
+        case 'amount': 
+          return compare(+a.amount, +b.amount, isAsc);
+        case 'date': 
+          return compare(+new Date(a.date).getTime(), +new Date(b.date).getTime(), isAsc);
         default: return 0;
       }
     });
