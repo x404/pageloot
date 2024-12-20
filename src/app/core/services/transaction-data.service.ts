@@ -63,11 +63,19 @@ export class TransactionDataService {
         this.transactionDataSubject$.next(data);
     }
 
-    onTypeChange(value: string): void {
+    typeChange(value: string): void {
         this.filtered_transaction_data = this.TRANSACTION_DATA.filter(transaction => {
             return transaction.type === value;
         })
 
-        this.transactionDataSubject$.next(this.filtered_transaction_data);
+        this.refreshTable(this.filtered_transaction_data);
+    }
+
+    resetFilter(): void {
+        this.filter.type = null;
+        this.filter.category = null;
+        
+        this.filtered_transaction_data = [];
+        this.refreshTable(this.TRANSACTION_DATA);
     }
 }

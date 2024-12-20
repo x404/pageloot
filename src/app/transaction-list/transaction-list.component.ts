@@ -71,12 +71,11 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
     }
 
     onResetFilter(): void {
-        this.transactionDataService.filter.type = null; // Reset the type filter
-        this.transactionDataService.filter.category = null; // Reset the category filter
+      this.transactionDataService.resetFilter();
     }
 
     onTypeChange(value: string): void {
-        this.transactionDataService.onTypeChange(value);
+        this.transactionDataService.typeChange(value);
     }
     
 }
