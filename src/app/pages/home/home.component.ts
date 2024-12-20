@@ -16,8 +16,8 @@ import { DialogRecordComponent } from "../../dialog-record/dialog-record.compone
 })
 export class HomeComponent {
     constructor( public dialogRef: MatDialog) {
-        
     }
+    
     onAddRecord() {
         this.openDialog();
     }

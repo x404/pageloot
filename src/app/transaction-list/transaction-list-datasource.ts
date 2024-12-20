@@ -102,9 +102,7 @@ export class TransactionListDataSource extends DataSource<TransactionListItem> {
     if (!this.sort || !this.sort.active || this.sort.direction === '') {
       return data;
     }
-
-    console.log( new Date(data[0].date).getTime())
-
+    
     return data.sort((a, b) => {
       const isAsc = this.sort?.direction === 'asc';
       switch (this.sort?.active) {
