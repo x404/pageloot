@@ -2,9 +2,13 @@
     <p class="card-header">Filter</p>
     <section class="mt-2">
         <header>By type:</header>
-        <mat-radio-group aria-label="Select a type" [(ngModel)]="filter.type">
-            <mat-radio-button value="1">Income</mat-radio-button>
-            <mat-radio-button value="2">Expense</mat-radio-button>
+        <mat-radio-group
+                aria-label="Select a type"
+                [(ngModel)]="transactionDataService.filter.type"
+                (ngModelChange)="onTypeChange($event)"
+        >
+            <mat-radio-button value="income">Income</mat-radio-button>
+            <mat-radio-button value="expense">Expense</mat-radio-button>
         </mat-radio-group>
     </section>
 
@@ -12,14 +16,14 @@
         <header>By category:</header>
         <mat-form-field class="w-50">
             <mat-label>Category</mat-label>
-            <mat-select [(ngModel)]="filter.category">
+            <mat-select [(ngModel)]="transactionDataService.filter.category">
                 @for (category of categories; track category.id) {
-                    <mat-option [value]="category.name">{{category.name}}</mat-option>
+                    <mat-option [value]="category.name">{{ category.name }}</mat-option>
                 }
             </mat-select>
         </mat-form-field>
     </section>
-    
+
     <button mat-raised-button (click)="onResetFilter()">Reset</button>
 </div>
 

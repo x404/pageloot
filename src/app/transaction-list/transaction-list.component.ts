@@ -44,10 +44,7 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
         }
     ]
 
-    filter = {
-        type: null, // or a default value, e.g., 1 for Income
-        category: null // Default to null, or specify a category name
-    };
+
 
 
     /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
@@ -61,8 +58,6 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
         this.transactionDataService.transactionData$.subscribe(transactionData => {
             this.balance.set(this.dataSource.getBalance());
         })
-
-
     }
 
     ngAfterViewInit(): void {
@@ -76,7 +71,12 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
     }
 
     onResetFilter(): void {
-        this.filter.type = null; // Reset the type filter
-        this.filter.category = null; // Reset the category filter
+        this.transactionDataService.filter.type = null; // Reset the type filter
+        this.transactionDataService.filter.category = null; // Reset the category filter
     }
+
+    onTypeChange(value: string): void {
+        this.transactionDataService.onTypeChange(value);
+    }
+    
 }
