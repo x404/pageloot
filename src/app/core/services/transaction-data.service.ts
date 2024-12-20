@@ -1,4 +1,4 @@
-import { inject, Injectable, OnChanges, SimpleChanges } from '@angular/core';
+import { inject, Injectable, OnChanges, signal, SimpleChanges } from '@angular/core';
 import { TransactionListItem } from "@interface/interfaces";
 import { BehaviorSubject } from "rxjs";
 import { LocalStorageService } from "./local-storage.service";
@@ -13,10 +13,10 @@ export class TransactionDataService {
 
     public localStorage = inject(LocalStorageService);
 
-    filter = {
+    filter = signal({
         type: null,
         category: null
-    };
+    });
 
 
     LOCAL_STORAGE_KEY = 'transaction-data';
@@ -72,9 +72,11 @@ export class TransactionDataService {
     }
 
     resetFilter(): void {
-        this.filter.type = null;
-        this.filter.category = null;
-        
+        this.filter.update(() => ({
+            type: null,
+            category: null,
+        }))
+
         this.filtered_transaction_data = [];
         this.refreshTable(this.TRANSACTION_DATA);
     }
