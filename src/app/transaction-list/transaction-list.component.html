@@ -4,7 +4,7 @@
         <header>By type:</header>
         <mat-radio-group
                 aria-label="Select a type"
-                [(ngModel)]="transactionDataService.filter.type"
+                [(ngModel)]="transactionDataService.filter().type"
                 (ngModelChange)="onTypeChange($event)"
         >
             <mat-radio-button value="income">Income</mat-radio-button>
@@ -16,7 +16,7 @@
         <header>By category:</header>
         <mat-form-field class="w-50">
             <mat-label>Category</mat-label>
-            <mat-select [(ngModel)]="transactionDataService.filter.category">
+            <mat-select [(ngModel)]="transactionDataService.filter().category">
                 @for (category of categories; track category.id) {
                     <mat-option [value]="category.name">{{ category.name }}</mat-option>
                 }
