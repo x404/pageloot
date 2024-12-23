@@ -66,16 +66,16 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
         this.table.dataSource = this.dataSource;
     }
 
-    applyFilter($event: KeyboardEvent) {
-
-    }
-
     onResetFilter(): void {
       this.transactionDataService.resetFilter();
     }
 
-    onTypeChange(value: string): void {
+    onTypeChange(value: string | null): void {
         this.transactionDataService.typeChange(value);
+    }
+
+    onModelChange(value: string | null): void {
+        this.transactionDataService.modelChange(value);
     }
     
 }

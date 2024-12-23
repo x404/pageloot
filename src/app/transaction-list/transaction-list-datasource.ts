@@ -16,7 +16,7 @@ import { inject } from "@angular/core";
 export class TransactionListDataSource extends DataSource<TransactionListItem> {
 
     public transactionDataService = inject(TransactionDataService);
-    data: TransactionListItem[] = this.transactionDataService.getTransactionData();
+    data: TransactionListItem[] = this.transactionDataService.getAllTransactionData();
 
     paginator: MatPaginator | undefined;
     sort: MatSort | undefined;
@@ -28,7 +28,7 @@ export class TransactionListDataSource extends DataSource<TransactionListItem> {
 
 
     getBalance(): number {
-        return this.transactionDataService.getTransactionData().reduce((acc, transactionItem) => {
+        return this.transactionDataService.getAllTransactionData().reduce((acc, transactionItem) => {
             if (transactionItem.type === 'expense') {
                 acc -= +transactionItem.amount;
             } else {
