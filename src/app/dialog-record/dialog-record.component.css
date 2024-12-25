@@ -2,3 +2,8 @@ mat-form-field {
     width: 100%;
 }
 
+.new-category {
+    font-style: italic;
+    font-weight: bold;
+    color: #000;
+}

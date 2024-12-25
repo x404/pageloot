@@ -20,7 +20,7 @@ export class CategoriesStorageService {
         }
     ]
 
-    getCategories = () => {
+    getCategories = () : Category[] => {
         return this.categories;
     }
 
