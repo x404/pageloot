@@ -26,8 +26,8 @@ import { Category, TransactionListItem } from "@interface/interfaces";
 import { TransactionDataService } from "../core/services/transaction-data.service";
 import { CategoriesStorageService } from "../core/services/categories-storage.service";
 import { AsyncPipe } from "@angular/common";
-import { MatAutocomplete, MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { Observable, of, startWith, tap } from "rxjs";
+import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
+import { Observable, of, startWith } from "rxjs";
 import { map } from "rxjs/operators";
 
 
@@ -167,7 +167,7 @@ export class DialogRecordComponent implements OnInit {
     }
 
 
-    onCategorySelected(event: any): void {
+    onCategorySelected(event: MatAutocompleteSelectedEvent): void {
         const selectedCategory: Category = event.option.value;
         // Update the form's category field with the selected category
         this.recordForm.patchValue({ category: selectedCategory.name });
