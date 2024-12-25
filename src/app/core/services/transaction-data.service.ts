@@ -23,12 +23,6 @@ export class TransactionDataService {
 
 
     LOCAL_STORAGE_KEY = 'transaction-data';
-    // INITIAL_TRANSACTION_DATA: TransactionListItem[] = [
-    //     { name: 'Hydrogen', amount: 1, type: 'income', category: 'Groceries', date: new Date() },
-    //     { name: 'Helium', amount: 3, type: 'income', category: 'Groceries', date: new Date() },
-    //     { name: 'Lithium', amount: 5, type: 'expense', category: 'Salary', date: new Date() },
-    //     { name: 'Beryllium', amount: 10, type: 'income', category: 'Groceries', date: new Date() }
-    // ];
     INITIAL_TRANSACTION_DATA: TransactionListItem[] = [];
     TRANSACTION_DATA: TransactionListItem[] = [];
 

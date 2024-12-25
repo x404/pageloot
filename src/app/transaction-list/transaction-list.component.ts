@@ -13,6 +13,7 @@ import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { MatButton } from "@angular/material/button";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
+import { CategoriesStorageService } from "../core/services/categories-storage.service";
 
 @Component({
     selector: 'app-transaction-list',
@@ -28,25 +29,11 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
     dataSource = new TransactionListDataSource();
 
     public transactionDataService = inject(TransactionDataService);
+    public categoriesStorage = inject(CategoriesStorageService);
 
-    categories: Category[] = [
-        {
-            "id": 1,
-            "name": "Groceries"
-        },
-        {
-            "id": 2,
-            "name": "Salary"
-        },
-        {
-            "id": 3,
-            "name": "Entertainment"
-        }
-    ]
+    categories: Category[] = [];
 
-
-
-
+    
     /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
     displayedColumns = ['type', 'name', 'amount', 'category', 'date'];
 
@@ -58,6 +45,8 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
         this.transactionDataService.transactionData$.subscribe(transactionData => {
             this.balance.set(this.dataSource.getBalance());
         })
+        
+        this.categories = this.categoriesStorage.getCategories();
     }
 
     ngAfterViewInit(): void {

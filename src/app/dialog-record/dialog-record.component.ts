@@ -24,6 +24,7 @@ import { MomentDateAdapter } from "@angular/material-moment-adapter";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { Category, TransactionListItem } from "@interface/interfaces";
 import { TransactionDataService } from "../core/services/transaction-data.service";
+import { CategoriesStorageService } from "../core/services/categories-storage.service";
 
 
 export const MY_FORMATS = {
@@ -75,7 +76,9 @@ export class DialogRecordComponent implements OnInit {
     
     categories: Category[] = [];
     public transactionDataService = inject(TransactionDataService);
-    
+    public categoriesStorage = inject(CategoriesStorageService);
+
+
     isSaving = signal<boolean>(false);
  
     constructor(
@@ -92,20 +95,7 @@ export class DialogRecordComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.categories = [
-            {
-                "id": 1,
-                "name": "Groceries"
-            },
-            {
-                "id": 2,
-                "name": "Salary"
-            },
-            {
-                "id": 3,
-                "name": "Entertainment"
-            }
-        ]
+        this.categories = this.categoriesStorage.getCategories();
     }
 
     get amountControl() {
