@@ -196,6 +196,7 @@ export class DialogRecordComponent implements OnInit {
     
     private saveTransaction(transaction: TransactionListItem): void {
         this.transactionDataService.saveTransaction(transaction);
+        this.transactionDataService.refreshTable();
     }
     
     private isFormValid(formData: any): boolean {

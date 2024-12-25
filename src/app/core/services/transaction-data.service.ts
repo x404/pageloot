@@ -57,11 +57,10 @@ export class TransactionDataService {
     saveTransaction(data: TransactionListItem) {
         this.TRANSACTION_DATA.push(data);
         this.localStorage.set(this.LOCAL_STORAGE_KEY, this.TRANSACTION_DATA);
-        this.refreshTable(this.TRANSACTION_DATA);
     }
 
-    private refreshTable(data: TransactionListItem[]) {
-        this.transactionDataSubject$.next(data);
+    public refreshTable(data?: TransactionListItem[]) {
+        this.transactionDataSubject$.next(data || this.TRANSACTION_DATA);
     }
 
     typeChange(value: string | null): void {
@@ -110,7 +109,7 @@ export class TransactionDataService {
             type: null,
             category: null,
         }));
-        this.filteredTransactionData = this.TRANSACTION_DATA;
-        this.refreshTable(this.TRANSACTION_DATA);
+        this.filteredTransactionData = [...this.TRANSACTION_DATA];
+        this.refreshTable();
     }
 }
