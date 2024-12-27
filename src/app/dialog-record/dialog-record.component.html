@@ -114,9 +114,21 @@
                 @for (category of filteredCategories | async; track category) {
                     <mat-option [value]="category">{{ category.name }}</mat-option>
                 }
+
+                <!-- Add new category -->
+                @if (addCategoryIfNeeded()) {
+                    <mat-option
+                            (click)="addCategory(categoryControl.value)"
+                            class="new-category"
+                            [value]="categoryControl.value"
+                    >
+                        Add new category: "{{ categoryControl.value }}"
+                    </mat-option>
+                }
+
             </mat-autocomplete>
         </mat-form-field>
-        
+
         <mat-form-field>
             <mat-label>Choose a date</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="date">

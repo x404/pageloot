@@ -168,9 +168,9 @@ export class DialogRecordComponent implements OnInit {
 
 
     onCategorySelected(event: MatAutocompleteSelectedEvent): void {
-        const selectedCategory: Category = event.option.value;
+        const selectedCategory: Category = event.option.value.name || event.option.value;
         // Update the form's category field with the selected category
-        this.recordForm.patchValue({ category: selectedCategory.name });
+        this.recordForm.patchValue({ category: selectedCategory });
     }
     
     
@@ -210,26 +210,24 @@ export class DialogRecordComponent implements OnInit {
     }
 
 
+    get canAddCategory(): "" | null | boolean {
+        const value = this.categoryControl.value;
+        return value && !this.categories.some(cat => cat.name.toLowerCase() === (value as string).toLowerCase());
+    }
+    
     addCategoryIfNeeded(): boolean {
-        // if (this.canAddCategory) {
-        //     this.addCategory(this.categoryControl.value);
-        // }
-
-        // console.log(this.categoryControl.value)
-        
-        return true;
+        return typeof this.categoryControl.value === 'string' && this.categoryControl.value.length > 0;
     }
 
-    addCategory(): void {
-        // const newCategory: Category = {
-        //     id: null, // Присвоение ID возможно при сохранении
-        //     name
-        // };
-        // this.categories.push(newCategory); // Добавление новой категории
+    addCategory(value: string | Category | null): void {
         const categoryName = this.categoryControl.value as string;  // Приводим к string в TypeScript
+        const newCategory: Category = {
+            id: new Date().getTime(), // Присвоение ID возможно при сохранении
+            name: categoryName
+        };
+        this.categories.push(newCategory); // Добавление новой категории
 
-        console.log('newCategory', categoryName)
-        // this.categoryControl.setValue(newCategory); // Установка значения
+        this.categoryControl.setValue(newCategory); // Установка значения
     }
     
     protected readonly name = name;
