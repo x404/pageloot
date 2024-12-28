@@ -74,7 +74,7 @@ export const MY_FORMATS = {
 export class DialogRecordComponent implements OnInit {
     recordForm: FormGroup;
     regexPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
-    
+
     categories: Category[] = [];
     public transactionDataService = inject(TransactionDataService);
     public categoriesStorage = inject(CategoriesStorageService);
@@ -83,7 +83,7 @@ export class DialogRecordComponent implements OnInit {
 
     categoryControl = new FormControl<string | Category>('');
     filteredCategories: Observable<Category[]>;
-    
+
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
@@ -102,16 +102,18 @@ export class DialogRecordComponent implements OnInit {
     ngOnInit() {
         this.categories = this.categoriesStorage.getCategories();
 
+        console.log(this.categories)
+
         this.filteredCategories = this.categoryControl.valueChanges.pipe(
             startWith(''),
             map(value => {
                 const name = typeof value === 'string' ? value : value?.name;
-                return name ? this._filter(name as string) : this.categories.slice();
+                return name ? this.filterCategoriesByName(name as string) : this.categories.slice();
             }),
         );
     }
-    
-    private _filter(name: string): Category[] {
+
+    private filterCategoriesByName(name: string): Category[] {
         const filterValue = name.toLowerCase();
         return this.categories.filter(option => option.name.toLowerCase().includes(filterValue));
     }
@@ -147,7 +149,7 @@ export class DialogRecordComponent implements OnInit {
 
         event.preventDefault();
     }
-    
+
     validateInput(event: Event) {
         const input = event.target as HTMLInputElement;
         const value = input.value;
@@ -169,15 +171,21 @@ export class DialogRecordComponent implements OnInit {
 
     onCategorySelected(event: MatAutocompleteSelectedEvent): void {
         const selectedCategory: Category = event.option.value.name || event.option.value;
+        console.log('selectedCategory=', selectedCategory);
         // Update the form's category field with the selected category
         this.recordForm.patchValue({ category: selectedCategory });
+
+        const isNewCategory = typeof event.option.value !== 'object';
+        if (isNewCategory) {
+            this.addCategory();
+        }
     }
-    
-    
+
+
     onSubmit() {
         const formData: TransactionListItem = this.recordForm.value;
 
-        console.log( formData );
+        console.log(formData);
         if (!this.isFormValid(formData)) {
             return;
         }
@@ -190,45 +198,41 @@ export class DialogRecordComponent implements OnInit {
         // Save product data and refresh table
         this.saveTransaction(formData);
         // this.transactionDataService.refreshTable();
-        
+
         this.dialogRef.close();
     }
-    
+
     private saveTransaction(transaction: TransactionListItem): void {
         this.transactionDataService.saveTransaction(transaction);
         this.transactionDataService.refreshTable();
     }
-    
+
     private isFormValid(formData: any): boolean {
         const { name, amount, type, category } = formData;
         return name && amount && type && category;
     }
-    
+
     displayCategoryName(category: Category): string {
         // return category.name;
         return category && category.name ? category.name : '';
-    }
-
-
-    get canAddCategory(): "" | null | boolean {
-        const value = this.categoryControl.value;
-        return value && !this.categories.some(cat => cat.name.toLowerCase() === (value as string).toLowerCase());
     }
     
     addCategoryIfNeeded(): boolean {
         return typeof this.categoryControl.value === 'string' && this.categoryControl.value.length > 0;
     }
 
-    addCategory(value: string | Category | null): void {
-        const categoryName = this.categoryControl.value as string;  // Приводим к string в TypeScript
-        const newCategory: Category = {
-            id: new Date().getTime(), // Присвоение ID возможно при сохранении
-            name: categoryName
-        };
-        this.categories.push(newCategory); // Добавление новой категории
-
-        this.categoryControl.setValue(newCategory); // Установка значения
+    addCategory(): void {
+        const categoryName = this.categoryControl.value as string;
+        if (categoryName) {
+            const newCategory: Category = {
+                id: new Date().getTime(),
+                name: categoryName
+            };
+            this.categoriesStorage.addCategory(newCategory);
+            this.categoryControl.setValue(newCategory);
+        }
     }
-    
+
+
     protected readonly name = name;
 }

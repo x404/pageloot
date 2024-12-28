@@ -45,56 +45,6 @@
             }
         </mat-form-field>
 
-        <!--        <mat-form-field-->
-        <!--                appearance="fill"-->
-        <!--                class="my-1"-->
-        <!--        >-->
-        <!--            <mat-label>Select</mat-label>-->
-        <!--            <mat-select formControlName="category">-->
-        <!--                @for (category of categories; track category.id) {-->
-        <!--                    <mat-option-->
-        <!--                            [value]="category?.name"-->
-        <!--                    >-->
-        <!--                        {{ category?.name }}-->
-        <!--                    </mat-option>-->
-        <!--                }-->
-        <!--            </mat-select>-->
-        <!--        </mat-form-field>-->
-        <!--        <mat-form-field appearance="fill" class="my-1">-->
-        <!--            <mat-label>Select or Add Category</mat-label>-->
-        <!--            <input-->
-        <!--                    type="text"-->
-        <!--                    matInput-->
-        <!--                    [formControl]="categoryControl"-->
-        <!--                    placeholder="Choose or type new category"-->
-        <!--                    [matAutocomplete]="auto"-->
-        <!--                    (keydown.enter)="addCategoryIfNeeded()"-->
-        <!--            >-->
-        <!--            <mat-autocomplete -->
-        <!--                #auto="matAutocomplete" -->
-        <!--                [displayWith]="displayCategoryName"-->
-        <!--            >-->
-
-        <!--                @for (category of filteredCategories | async; track category) {-->
-        <!--                    <mat-option-->
-        <!--                            [value]="category?.name"-->
-        <!--                    >-->
-        <!--                        {{ category?.name }}-->
-        <!--                    </mat-option>-->
-        <!--                }-->
-
-        <!--                &lt;!&ndash; Add new category &ndash;&gt;-->
-        <!--                @if (addCategoryIfNeeded()) {-->
-        <!--                    <mat-option-->
-        <!--                            (click)="addCategory()"-->
-        <!--                            class="new-category"-->
-        <!--                    >-->
-        <!--                        Add new category: "{{ categoryControl.value }}"-->
-        <!--                    </mat-option>-->
-        <!--                }-->
-        <!--            </mat-autocomplete>-->
-        <!--        </mat-form-field>-->
-
         <mat-form-field class="my-1">
             <mat-label>Select or Add Category</mat-label>
             <input
@@ -118,7 +68,6 @@
                 <!-- Add new category -->
                 @if (addCategoryIfNeeded()) {
                     <mat-option
-                            (click)="addCategory(categoryControl.value)"
                             class="new-category"
                             [value]="categoryControl.value"
                     >

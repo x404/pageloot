@@ -23,5 +23,9 @@ export class CategoriesStorageService {
     getCategories = () : Category[] => {
         return this.categories;
     }
+    
+    addCategory = (category: Category) => {
+        this.categories.push(category);
+    }
 
 }
