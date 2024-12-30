@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import {
     MatDialogActions,
     MatDialogClose,
@@ -27,7 +27,7 @@ import { TransactionDataService } from "../core/services/transaction-data.servic
 import { CategoriesStorageService } from "../core/services/categories-storage.service";
 import { AsyncPipe } from "@angular/common";
 import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { Observable, of, startWith } from "rxjs";
+import { debounceTime, Observable, of, startWith } from "rxjs";
 import { map } from "rxjs/operators";
 
 
@@ -72,50 +72,59 @@ export const MY_FORMATS = {
     styleUrl: './dialog-record.component.css'
 })
 export class DialogRecordComponent implements OnInit {
-    recordForm: FormGroup;
+    recordForm!: FormGroup;
     regexPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
 
     categories: Category[] = [];
     public transactionDataService = inject(TransactionDataService);
     public categoriesStorage = inject(CategoriesStorageService);
+    private destroyRef = inject(DestroyRef);
 
+    
     isSaving = signal<boolean>(false);
 
     categoryControl = new FormControl<string | Category>('');
-    filteredCategories: Observable<Category[]>;
+    filteredCategories!: Observable<Category[]>;
 
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
     ) {
+        this._initializeForm();
+    }
+
+    private _initializeForm(): void {
         this.recordForm = this.fb.group({
             name: ['', Validators.required],
             amount: ['', [Validators.required, Validators.pattern(this.regexPattern)]],
             type: ['income'],
             category: ['', Validators.required],
             date: [new Date(), Validators.required]
-        })
-
-        this.filteredCategories = of([]);
+        });
     }
 
     ngOnInit() {
         this.categories = this.categoriesStorage.getCategories();
-
-        console.log(this.categories)
-
-        this.filteredCategories = this.categoryControl.valueChanges.pipe(
+        const valueChangeSubscription = this.categoryControl.valueChanges.pipe(
             startWith(''),
+            debounceTime(300),
             map(value => {
                 const name = typeof value === 'string' ? value : value?.name;
                 return name ? this.filterCategoriesByName(name as string) : this.categories.slice();
             }),
-        );
+        ).subscribe((filtered) => this.filteredCategories = of(filtered))
+
+
+        this.destroyRef.onDestroy(() => {
+            valueChangeSubscription.unsubscribe();
+        })
     }
 
     private filterCategoriesByName(name: string): Category[] {
-        const filterValue = name.toLowerCase();
-        return this.categories.filter(option => option.name.toLowerCase().includes(filterValue));
+        const filterValue = name.trim().toLowerCase();
+        return this.categories.filter(option =>
+            option.name.toLowerCase().includes(filterValue)
+        );
     }
 
     get amountControl() {
@@ -171,13 +180,12 @@ export class DialogRecordComponent implements OnInit {
 
     onCategorySelected(event: MatAutocompleteSelectedEvent): void {
         const selectedCategory: Category = event.option.value.name || event.option.value;
-        console.log('selectedCategory=', selectedCategory);
-        // Update the form's category field with the selected category
-        this.recordForm.patchValue({ category: selectedCategory });
-
-        const isNewCategory = typeof event.option.value !== 'object';
+        
+        const isNewCategory = typeof event.option.value === 'string';
         if (isNewCategory) {
             this.addCategory();
+        } else {
+            this.recordForm.patchValue({ category: selectedCategory });
         }
     }
 
@@ -189,16 +197,8 @@ export class DialogRecordComponent implements OnInit {
         if (!this.isFormValid(formData)) {
             return;
         }
-
         this.isSaving.set(true);
-
-        // Prepare product data for saving
-        // const product = this.prepareProductData(formData);
-        //
-        // Save product data and refresh table
         this.saveTransaction(formData);
-        // this.transactionDataService.refreshTable();
-
         this.dialogRef.close();
     }
 
@@ -216,21 +216,28 @@ export class DialogRecordComponent implements OnInit {
         // return category.name;
         return category && category.name ? category.name : '';
     }
-    
+
     addCategoryIfNeeded(): boolean {
         return typeof this.categoryControl.value === 'string' && this.categoryControl.value.length > 0;
     }
 
     addCategory(): void {
+        // TODO: dublicate name is possible.
         const categoryName = this.categoryControl.value as string;
-        if (categoryName) {
-            const newCategory: Category = {
-                id: new Date().getTime(),
-                name: categoryName
-            };
-            this.categoriesStorage.addCategory(newCategory);
-            this.categoryControl.setValue(newCategory);
+        if (!categoryName || this.isDuplicateCategory(categoryName)) {
+            return; // Ignore invalid or duplicate category
         }
+
+        const newCategory: Category = {
+            id: new Date().getTime(), // Generate unique ID
+            name: categoryName
+        };
+        this.categoriesStorage.addCategory(newCategory);
+        this.categoryControl.setValue(newCategory);
+    }
+
+    private isDuplicateCategory(name: string): boolean {
+        return this.categories.some(cat => cat.name.toLowerCase() === name.toLowerCase());
     }
 
 
