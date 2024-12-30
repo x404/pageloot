@@ -78,14 +78,14 @@ export class DialogRecordComponent implements OnInit {
     categories: Category[] = [];
     public transactionDataService = inject(TransactionDataService);
     public categoriesStorage = inject(CategoriesStorageService);
-    private destroyRef = inject(DestroyRef);
-
-
     isSaving = signal<boolean>(false);
-
+    
     categoryControl = new FormControl<string | Category>('');
     filteredCategories!: Observable<Category[]>;
 
+    private destroyRef = inject(DestroyRef);
+    private newCategory?: Category;
+    
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
@@ -179,27 +179,56 @@ export class DialogRecordComponent implements OnInit {
 
 
     onCategorySelected(event: MatAutocompleteSelectedEvent): void {
-        const selectedCategory: Category = event.option.value.name || event.option.value;
-
+        const selectedCategory: Category = event.option.value;
         const isNewCategory = typeof event.option.value === 'string';
         if (isNewCategory) {
-            this.addCategory();
+            this.prepareNewCategoryForSaving();
         } else {
             this.recordForm.patchValue({ category: selectedCategory });
         }
     }
 
 
+    prepareNewCategoryForSaving(): void {
+        const categoryName = this.categoryControl.value as string;
+        if (!categoryName || this.isDuplicateCategory(categoryName)) {
+            return; // Ignore invalid or duplicate category
+        }
+
+        this.newCategory = {
+            id: Date.now(), // Generate unique ID
+            name: categoryName
+        };
+        this.categoryControl.setValue(this.newCategory);
+        this.recordForm.patchValue({ category: categoryName });
+    }
+
+
+    private isDuplicateCategory(name: string): boolean {
+        return this.categories.some(cat => cat.name.toLowerCase() === name.toLowerCase());
+    }
+
+
     onSubmit() {
         const formData: TransactionListItem = this.recordForm.value;
 
-        console.log(formData);
         if (!this.isFormValid(formData)) {
             return;
         }
         this.isSaving.set(true);
         this.saveTransaction(formData);
+        
+        if (this.newCategory){
+            this.saveNewCategoryIntoStorage(formData.category);
+        }
         this.dialogRef.close();
+    }
+
+    private saveNewCategoryIntoStorage(categoryName: string): void {
+        if (this.newCategory) {
+            this.categoriesStorage.addCategory(this.newCategory);
+            this.newCategory = undefined; //reset category
+        }
     }
 
     private saveTransaction(transaction: TransactionListItem): void {
@@ -207,9 +236,9 @@ export class DialogRecordComponent implements OnInit {
         this.transactionDataService.refreshTable();
     }
 
-    private isFormValid(formData: any): boolean {
+    private isFormValid(formData: TransactionListItem): boolean {
         const { name, amount, type, category } = formData;
-        return name && amount && type && category;
+        return !!(name && amount && type && category);
     }
 
     displayCategoryName(category: Category): string {
@@ -218,28 +247,11 @@ export class DialogRecordComponent implements OnInit {
     }
 
     addCategoryIfNeeded(): boolean {
-        return typeof this.categoryControl.value === 'string'
-            && this.categoryControl.value.length > 0 
-            && !this.isDuplicateCategory(this.categoryControl.value);
-    }
-
-    addCategory(): void {
-        const categoryName = this.categoryControl.value as string;
-        if (!categoryName || this.isDuplicateCategory(categoryName)) {
-            return; // Ignore invalid or duplicate category
-        }
-
-        const newCategory: Category = {
-            id: new Date().getTime(), // Generate unique ID
-            name: categoryName
-        };
-        this.categoriesStorage.addCategory(newCategory);
-        this.categoryControl.setValue(newCategory);
-    }
-
-    private isDuplicateCategory(name: string): boolean {
-        return this.categories.some(cat => cat.name.toLowerCase() === name.toLowerCase());
-    }
+        const categoryValue = this.categoryControl.value;
+        return typeof categoryValue === 'string'
+            && categoryValue.length > 0
+            && !this.isDuplicateCategory(categoryValue);
+    } 
 
 
     protected readonly name = name;
