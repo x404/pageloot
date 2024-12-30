@@ -179,7 +179,7 @@ export class DialogRecordComponent implements OnInit {
 
 
     onCategorySelected(event: MatAutocompleteSelectedEvent): void {
-        const selectedCategory: Category = event.option.value;
+        const selectedCategory: Category = event.option.value.name;
         const isNewCategory = typeof event.option.value === 'string';
         if (isNewCategory) {
             this.prepareNewCategoryForSaving();
@@ -219,12 +219,12 @@ export class DialogRecordComponent implements OnInit {
         this.saveTransaction(formData);
         
         if (this.newCategory){
-            this.saveNewCategoryIntoStorage(formData.category);
+            this.saveNewCategoryIntoStorage();
         }
         this.dialogRef.close();
     }
 
-    private saveNewCategoryIntoStorage(categoryName: string): void {
+    private saveNewCategoryIntoStorage(): void {
         if (this.newCategory) {
             this.categoriesStorage.addCategory(this.newCategory);
             this.newCategory = undefined; //reset category
