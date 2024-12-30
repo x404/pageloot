@@ -80,7 +80,7 @@ export class DialogRecordComponent implements OnInit {
     public categoriesStorage = inject(CategoriesStorageService);
     private destroyRef = inject(DestroyRef);
 
-    
+
     isSaving = signal<boolean>(false);
 
     categoryControl = new FormControl<string | Category>('');
@@ -180,7 +180,7 @@ export class DialogRecordComponent implements OnInit {
 
     onCategorySelected(event: MatAutocompleteSelectedEvent): void {
         const selectedCategory: Category = event.option.value.name || event.option.value;
-        
+
         const isNewCategory = typeof event.option.value === 'string';
         if (isNewCategory) {
             this.addCategory();
@@ -218,11 +218,12 @@ export class DialogRecordComponent implements OnInit {
     }
 
     addCategoryIfNeeded(): boolean {
-        return typeof this.categoryControl.value === 'string' && this.categoryControl.value.length > 0;
+        return typeof this.categoryControl.value === 'string'
+            && this.categoryControl.value.length > 0 
+            && !this.isDuplicateCategory(this.categoryControl.value);
     }
 
     addCategory(): void {
-        // TODO: dublicate name is possible.
         const categoryName = this.categoryControl.value as string;
         if (!categoryName || this.isDuplicateCategory(categoryName)) {
             return; // Ignore invalid or duplicate category
