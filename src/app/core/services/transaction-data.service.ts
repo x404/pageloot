@@ -34,7 +34,7 @@ export class TransactionDataService {
 
     private initializeData(): void {
         if (this.localStorage.has(this.LOCAL_STORAGE_KEY)) {
-            this.transactionData = this.localStorage.get(this.LOCAL_STORAGE_KEY);
+            this.transactionData = this.localStorage.get(this.LOCAL_STORAGE_KEY) as TransactionListItem[];
         } else {
             this.localStorage.set(this.LOCAL_STORAGE_KEY, this.INITIAL_TRANSACTION_DATA);
             this.transactionData = [...this.INITIAL_TRANSACTION_DATA];
