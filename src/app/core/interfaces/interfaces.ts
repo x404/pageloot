@@ -9,5 +9,5 @@ export interface TransactionListItem {
     amount: number;
     type: 'income' | 'expense';
     category: string;
-    date: Date;
+    date: Date | number;
 }

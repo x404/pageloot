@@ -79,13 +79,13 @@ export class DialogRecordComponent implements OnInit {
     public transactionDataService = inject(TransactionDataService);
     public categoriesStorage = inject(CategoriesStorageService);
     isSaving = signal<boolean>(false);
-    
+
     categoryControl = new FormControl<string | Category>('');
     filteredCategories!: Observable<Category[]>;
 
     private destroyRef = inject(DestroyRef);
     private newCategory?: Category;
-    
+
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
@@ -211,14 +211,18 @@ export class DialogRecordComponent implements OnInit {
 
     onSubmit() {
         const formData: TransactionListItem = this.recordForm.value;
+        
+        if (formData.date instanceof Date) {
+            formData.date = formData.date.getTime();
+        }
 
         if (!this.isFormValid(formData)) {
             return;
         }
         this.isSaving.set(true);
         this.saveTransaction(formData);
-        
-        if (this.newCategory){
+
+        if (this.newCategory) {
             this.saveNewCategoryIntoStorage();
         }
         this.dialogRef.close();
@@ -251,7 +255,7 @@ export class DialogRecordComponent implements OnInit {
         return typeof categoryValue === 'string'
             && categoryValue.length > 0
             && !this.isDuplicateCategory(categoryValue);
-    } 
+    }
 
 
     protected readonly name = name;
