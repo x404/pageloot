@@ -13,6 +13,9 @@ export class TransactionDataService {
 
     public localStorage = inject(LocalStorageService);
 
+    private LOCAL_STORAGE_KEY = 'transaction-data';
+    private INITIAL_TRANSACTION_DATA: TransactionListItem[] = [];
+
     filter = signal<{
         type: string | null;
         category: string | null;
@@ -21,29 +24,25 @@ export class TransactionDataService {
         category: null
     });
 
-
-    LOCAL_STORAGE_KEY = 'transaction-data';
-    INITIAL_TRANSACTION_DATA: TransactionListItem[] = [];
-    TRANSACTION_DATA: TransactionListItem[] = [];
-
-
-    private allTransactions: TransactionListItem[] = [...this.TRANSACTION_DATA]; // Оригинальные данные
-    private filteredTransactionData: TransactionListItem[] = [...this.TRANSACTION_DATA]; // Текущие отфильтрованные данные
-
+    private transactionData: TransactionListItem[] = [];
+    private filteredTransactionData: TransactionListItem[] = [...this.transactionData]; // Текущие отфильтрованные данные
 
     constructor() {
+        this.initializeData();
+        this.refreshTable();
+    }
+
+    private initializeData(): void {
         if (this.localStorage.has(this.LOCAL_STORAGE_KEY)) {
-            this.TRANSACTION_DATA = this.localStorage.get(this.LOCAL_STORAGE_KEY);
+            this.transactionData = this.localStorage.get(this.LOCAL_STORAGE_KEY) as TransactionListItem[];
         } else {
             this.localStorage.set(this.LOCAL_STORAGE_KEY, this.INITIAL_TRANSACTION_DATA);
-            this.TRANSACTION_DATA = this.INITIAL_TRANSACTION_DATA;
+            this.transactionData = [...this.INITIAL_TRANSACTION_DATA];
         }
-
-        this.transactionDataSubject$.next(this.TRANSACTION_DATA);
     }
 
     getAllTransactionData(): TransactionListItem[] {
-        return this.TRANSACTION_DATA;
+        return this.transactionData;
     }
 
     getFilteredTransactionData(): TransactionListItem[] {
@@ -55,46 +54,42 @@ export class TransactionDataService {
     }
 
     saveTransaction(data: TransactionListItem) {
-        this.TRANSACTION_DATA.push(data);
-        this.localStorage.set(this.LOCAL_STORAGE_KEY, this.TRANSACTION_DATA);
+        console.log('saveTransaction', data);
+        if (!data) {
+            console.error('Invalid transaction data');
+            return;
+        }
+
+        this.transactionData.push(data);
+        this.localStorage.set(this.LOCAL_STORAGE_KEY, this.transactionData);
     }
 
     public refreshTable(data?: TransactionListItem[]) {
-        this.transactionDataSubject$.next(data || this.TRANSACTION_DATA);
+        console.log('refreshTable', data);
+        this.transactionDataSubject$.next(data || this.transactionData);
     }
 
-    typeChange(value: string | null): void {
-        // this.filtered_transaction_data = this.TRANSACTION_DATA.filter(transaction => {
-        //     return transaction.type.toLowerCase() === value.toLowerCase();
-        // })
-        //
-        // this.refreshTable(this.filtered_transaction_data);
-
+    changeType(value: string | null): void {
         this.filter.update(current => ({
             ...current,
             type: value
         }));
+
         this.applyFilters();
     }
 
-    modelChange(value: string | null): void {
-        // this.filtered_transaction_data = this.TRANSACTION_DATA.filter(transaction => {
-        //     return transaction.category.toLowerCase() === value.toLowerCase();
-        // })
-        //
-        // this.refreshTable(this.filtered_transaction_data);
-
+    changeModel(value: string | null): void {
         this.filter.update(current => ({
             ...current,
             category: value
         }));
-        this.applyFilters();
 
+        this.applyFilters();
     }
 
     private applyFilters(): void {
         const { type, category } = this.filter();
-        this.filteredTransactionData = this.TRANSACTION_DATA.filter(transaction => {
+        this.filteredTransactionData = this.transactionData.filter(transaction => {
             const matchesType = type ? transaction.type.toLowerCase() === type.toLowerCase() : true;
             const matchesCategory = category ? transaction.category.toLowerCase() === category.toLowerCase() : true;
             return matchesType && matchesCategory;
@@ -109,7 +104,8 @@ export class TransactionDataService {
             type: null,
             category: null,
         }));
-        this.filteredTransactionData = [...this.TRANSACTION_DATA];
+
+        this.filteredTransactionData = [...this.transactionData];
         this.refreshTable();
     }
 }

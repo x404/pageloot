@@ -60,11 +60,11 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
     }
 
     onTypeChange(value: string | null): void {
-        this.transactionDataService.typeChange(value);
+        this.transactionDataService.changeType(value);
     }
 
     onModelChange(value: string | null): void {
-        this.transactionDataService.modelChange(value);
+        this.transactionDataService.changeModel(value);
     }
     
 }
