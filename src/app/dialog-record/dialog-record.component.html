@@ -17,7 +17,7 @@
             <mat-label>Name</mat-label>
             <input matInput formControlName="name"/>
 
-            @if (this.recordForm.get('name')!.hasError('required')) {
+            @if (nameControl.hasError('required')) {
                 <mat-error>
                     Name is required
                 </mat-error>
@@ -40,13 +40,13 @@
 
             @if (amountControl.hasError('required')) {
                 <mat-error>
-                    Amount is required
+                    {{errorsMsg.amount.required}}
                 </mat-error>
             }
 
             @if (amountControl.hasError('pattern')) {
                 <mat-error>
-                    Must be a valid number with up to 2 decimal places
+                    {{errorsMsg.amount.length}}
                 </mat-error>
             }
         </mat-form-field>
@@ -84,7 +84,7 @@
             </mat-form-field>
             @if (recordForm.get('category')?.hasError('required') && recordForm.get('category')?.touched) {
                 <div class="mat-mdc-form-field-error mat-mdc-form-field-bottom-align ms-3 category-error position-absolute bottom-0 mb-2">
-                    Category is required.
+                    {{errorsMsg.category.required}}
                 </div>
             }            
         </div>

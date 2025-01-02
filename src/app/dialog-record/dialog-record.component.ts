@@ -86,6 +86,19 @@ export class DialogRecordComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
     private newCategory?: Category;
 
+    errorsMsg = {
+        name: {
+            required: 'Name is required',
+        },
+        amount: {
+            required: 'Amount is required',
+            length: 'Must be a valid number with up to 2 decimal places'
+        },
+        category: {
+            required: 'Category is required',
+        },
+    }
+
     constructor(
         public dialogRef: MatDialogRef<DialogRecordComponent>,
         private fb: FormBuilder
@@ -117,13 +130,11 @@ export class DialogRecordComponent implements OnInit {
 
         this.destroyRef.onDestroy(() => {
             valueChangeSubscription.unsubscribe();
-        })
-
+        });
 
         this.categoryControl.valueChanges.subscribe(value => {
             this.recordForm.patchValue({ category: value || null });
         });
-
     }
 
     private filterCategoriesByName(name: string): Category[] {
@@ -136,7 +147,7 @@ export class DialogRecordComponent implements OnInit {
     get nameControl() {
         return this.recordForm.get('name')!;
     }
-    
+
     get amountControl() {
         return this.recordForm.get('amount')!;
     }
