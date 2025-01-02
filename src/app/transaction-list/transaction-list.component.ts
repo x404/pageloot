@@ -32,7 +32,6 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
     public categoriesStorage = inject(CategoriesStorageService);
 
     categories: Category[] = [];
-
     
     /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
     displayedColumns = ['type', 'name', 'amount', 'category', 'date'];
@@ -66,5 +65,4 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
     onModelChange(value: string | null): void {
         this.transactionDataService.changeModel(value);
     }
-    
 }
