@@ -7,3 +7,8 @@ mat-form-field {
     font-weight: bold;
     color: #000;
 }
+
+
+.category-error{
+    font-size: 12px;
+}

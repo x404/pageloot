@@ -25,7 +25,7 @@ import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { Category, TransactionListItem } from "@interface/interfaces";
 import { TransactionDataService } from "../core/services/transaction-data.service";
 import { CategoriesStorageService } from "../core/services/categories-storage.service";
-import { AsyncPipe } from "@angular/common";
+import { AsyncPipe, NgIf } from "@angular/common";
 import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { debounceTime, Observable, of, startWith } from "rxjs";
 import { map } from "rxjs/operators";
@@ -98,7 +98,7 @@ export class DialogRecordComponent implements OnInit {
             name: ['', Validators.required],
             amount: ['', [Validators.required, Validators.pattern(this.regexPattern)]],
             type: ['income'],
-            category: ['', Validators.required],
+            category: [null, [Validators.required]],
             date: [new Date(), Validators.required]
         });
     }
@@ -118,6 +118,12 @@ export class DialogRecordComponent implements OnInit {
         this.destroyRef.onDestroy(() => {
             valueChangeSubscription.unsubscribe();
         })
+
+
+        this.categoryControl.valueChanges.subscribe(value => {
+            this.recordForm.patchValue({ category: value || null });
+        });
+
     }
 
     private filterCategoriesByName(name: string): Category[] {
@@ -127,6 +133,10 @@ export class DialogRecordComponent implements OnInit {
         );
     }
 
+    get nameControl() {
+        return this.recordForm.get('name')!;
+    }
+    
     get amountControl() {
         return this.recordForm.get('amount')!;
     }
@@ -210,8 +220,13 @@ export class DialogRecordComponent implements OnInit {
 
 
     onSubmit() {
+        if (this.recordForm.invalid) {
+            this.recordForm.markAllAsTouched(); // Mark all fields as affected to show errors
+            return;
+        }
+
         const formData: TransactionListItem = this.recordForm.value;
-        
+        console.log('formData', formData);
         if (formData.date instanceof Date) {
             formData.date = formData.date.getTime();
         }
