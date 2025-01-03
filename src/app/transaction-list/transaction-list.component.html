@@ -20,7 +20,7 @@
                     [(ngModel)]="transactionDataService.filter().category"
                     (ngModelChange)="onModelChange($event)"
             >
-                @for (category of categories; track category.id) {
+                @for (category of categories(); track category.id) {
                     <mat-option [value]="category.name">{{ category.name }}</mat-option>
                 }
             </mat-select>
@@ -76,7 +76,7 @@
     </table>
 
     <mat-paginator #paginator
-                   [length]="dataSource.data.length"
+                   [length]="dataSource.data().length"
                    [pageIndex]="0"
                    [pageSize]="10"
                    [pageSizeOptions]="[5, 10, 20]"

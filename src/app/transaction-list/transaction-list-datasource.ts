@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { merge, Observable } from 'rxjs';
 import { TransactionListItem } from "@interface/interfaces";
 import { TransactionDataService } from "../core/services/transaction-data.service";
-import { inject } from "@angular/core";
+import { inject, signal } from "@angular/core";
 
 
 /**
@@ -14,47 +14,15 @@ import { inject } from "@angular/core";
  * (including sorting, pagination, and filtering).
  */
 export class TransactionListDataSource extends DataSource<TransactionListItem> {
-
     public transactionDataService = inject(TransactionDataService);
-    data: TransactionListItem[] = this.transactionDataService.getAllTransactionData();
+    data = signal<TransactionListItem[]>(this.transactionDataService.getAllTransactionData());
 
     paginator: MatPaginator | undefined;
     sort: MatSort | undefined;
-
-
+    
     constructor() {
         super();
     }
-
-
-    getBalance(): number {
-        return this.transactionDataService.getAllTransactionData().reduce((acc, transactionItem) => {
-            if (transactionItem.type === 'expense') {
-                acc -= +transactionItem.amount;
-            } else {
-                acc += +transactionItem.amount;
-            }
-            return acc;
-        }, 0);
-    }
-
-    /**
-     * Connect this data source to the table. The table will only update when
-     * the returned stream emits new items.
-     * @returns A stream of the items to be rendered.
-     */
-    // connect(): Observable<TransactionListItem[]> {
-    //   if (this.paginator && this.sort) {
-    //     // Combine everything that affects the rendered data into one update
-    //     // stream for the data-table to consume.
-    //     return merge(observableOf(this.data), this.paginator.page, this.sort.sortChange)
-    //       .pipe(map(() => {
-    //         return this.getPagedData(this.getSortedData([...this.data ]));
-    //       }));
-    //   } else {
-    //     throw Error('Please set the paginator and sort on the data source before connecting.');
-    //   }
-    // }
 
     connect(): Observable<TransactionListItem[]> {
         if (this.paginator && this.sort) {

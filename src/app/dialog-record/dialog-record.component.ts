@@ -25,7 +25,7 @@ import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { Category, TransactionListItem } from "@interface/interfaces";
 import { TransactionDataService } from "../core/services/transaction-data.service";
 import { CategoriesStorageService } from "../core/services/categories-storage.service";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { debounceTime, Observable, of, startWith } from "rxjs";
 import { map } from "rxjs/operators";
@@ -75,7 +75,7 @@ export class DialogRecordComponent implements OnInit {
     recordForm!: FormGroup;
     regexPattern = /^[0-9]+(\.[0-9]{1,2})?$/;
 
-    categories: Category[] = [];
+    categories = signal<Category[]>([]);
     public transactionDataService = inject(TransactionDataService);
     public categoriesStorage = inject(CategoriesStorageService);
     isSaving = signal<boolean>(false);
@@ -117,13 +117,13 @@ export class DialogRecordComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.categories = this.categoriesStorage.getCategories();
+        this.categories.set(this.categoriesStorage.getCategories());
         const valueChangeSubscription = this.categoryControl.valueChanges.pipe(
             startWith(''),
             debounceTime(300),
             map(value => {
                 const name = typeof value === 'string' ? value : value?.name;
-                return name ? this.filterCategoriesByName(name as string) : this.categories.slice();
+                return name ? this.filterCategoriesByName(name as string) : this.categories().slice();
             }),
         ).subscribe((filtered) => this.filteredCategories = of(filtered))
 
@@ -139,7 +139,7 @@ export class DialogRecordComponent implements OnInit {
 
     private filterCategoriesByName(name: string): Category[] {
         const filterValue = name.trim().toLowerCase();
-        return this.categories.filter(option =>
+        return this.categories().filter(option =>
             option.name.toLowerCase().includes(filterValue)
         );
     }
@@ -226,7 +226,7 @@ export class DialogRecordComponent implements OnInit {
 
 
     private isDuplicateCategory(name: string): boolean {
-        return this.categories.some(cat => cat.name.toLowerCase() === name.toLowerCase());
+        return this.categories().some(cat => cat.name.toLowerCase() === name.toLowerCase());
     }
 
 

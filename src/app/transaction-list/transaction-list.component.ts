@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatTableModule, MatTable } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -31,21 +31,22 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
     public transactionDataService = inject(TransactionDataService);
     public categoriesStorage = inject(CategoriesStorageService);
 
-    categories: Category[] = [];
+    categories = signal<Category[]>([]);
     
     /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
     displayedColumns = ['type', 'name', 'amount', 'category', 'date'];
 
-    balance = signal<number>(0);
 
+    transactions = signal<TransactionListItem[]>([]);
+    balance = signal<number>(0);
+    
     ngOnInit() {
-        this.balance.set(this.dataSource.getBalance());
+        // this.balance.set(this.dataSource.calculateBalance());
+        this.categories.set(this.categoriesStorage.getCategories());
 
         this.transactionDataService.transactionData$.subscribe(transactionData => {
-            this.balance.set(this.dataSource.getBalance());
+            this.balance.set(this.calculateBalance());
         })
-        
-        this.categories = this.categoriesStorage.getCategories();
     }
 
     ngAfterViewInit(): void {
@@ -64,5 +65,17 @@ export class TransactionListComponent implements AfterViewInit, OnInit {
 
     onModelChange(value: string | null): void {
         this.transactionDataService.changeModel(value);
+    }
+
+
+    calculateBalance(): number {
+        return this.transactionDataService.getAllTransactionData().reduce((sum, transaction) => {
+            if (transaction.type === 'expense') {
+                sum -= +transaction.amount;
+            } else {
+                sum += +transaction.amount;
+            }
+            return sum;
+        }, 0);
     }
 }
