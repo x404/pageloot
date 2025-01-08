@@ -35,4 +35,4 @@ You need to create a web application for tracking personal finances. The user sh
     • Responsive design for convenient use on mobile devices. (optional) 
 # pageloot 
 
-### Result: https://x404.github.io/sidisgroup/
+### Result: https://x404.github.io/pageloot/
