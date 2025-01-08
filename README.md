@@ -33,4 +33,6 @@ You need to create a web application for tracking personal finances. The user sh
     • Everything should to be developed taking into account the fact that in the future it is possible to add other types of questions. 
     • All application state and all data must be stored in local storage. That is, after reloading the page, the state of the application must be restored. All previously created questions and answers must be restored. 
     • Responsive design for convenient use on mobile devices. (optional) 
-# pageloot
+# pageloot 
+
+### Result: [https://x404.github.io/sidisgroup/]
